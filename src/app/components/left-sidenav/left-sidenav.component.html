@@ -4,17 +4,52 @@
       <mat-icon>menu</mat-icon>
     </button>
     <h1 class="app-name">Grade Tracker</h1>
+    <span class="spacer"></span>
+    <button mat-icon-button routerLink="sheet-view">
+      <mat-icon>view_list</mat-icon>
+    </button>
   </mat-toolbar>
 
-  <mat-sidenav-container class="sidenav-container"
-                        [style.marginTop.px]="isMobile() ? 56 : 0">
-    <mat-sidenav #snav [mode]="isMobile() ? 'over' : 'side'"
-                [fixedInViewport]="isMobile()" fixedTopGap="56">
-      <app-file-tree></app-file-tree>
+  <mat-sidenav-container
+    class="sidenav-container"
+    [hasBackdrop]="true"
+    [style.marginTop.px]="isMobile() ? 56 : 0"
+  >
+    <mat-sidenav
+      #snav
+      [mode]="isMobile() ? 'over' : 'side'"
+      [fixedInViewport]="isMobile()"
+      fixedTopGap="56"
+    >
+      <mat-toolbar class="nav-top-bar">
+        <button
+          mat-icon-button
+          [routerLink]="[{ outlets: { sidenav: ['file-tree'] } }]"
+        >
+          <mat-icon>folder</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [routerLink]="[{ outlets: { sidenav: ['search-files'] } }]"
+        >
+          <mat-icon>search</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          [routerLink]="[{ outlets: { sidenav: ['bookmarked'] } }]"
+        >
+          <mat-icon>bookmark</mat-icon>
+        </button>
+        <span class="spacer"></span>
+        <button mat-icon-button routerLink="settings">
+          <mat-icon>settings</mat-icon>
+        </button>
+      </mat-toolbar>
+      <router-outlet name="sidenav"></router-outlet>
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <app-body></app-body>
+      <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

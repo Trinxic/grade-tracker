@@ -5,8 +5,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatListModule } from "@angular/material/list";
-import { FileTreeComponent } from "./file-tree/file-tree.component";
-import { BodyComponent } from "../body/body.component";
+import { RouterLink, RouterOutlet } from "@angular/router";
 
 /** @title Responsive sidenav */
 @Component({
@@ -17,8 +16,8 @@ import { BodyComponent } from "../body/body.component";
     MatIconModule,
     MatSidenavModule,
     MatListModule,
-    FileTreeComponent,
-    BodyComponent,
+    RouterLink,
+    RouterOutlet,
   ],
   templateUrl: "./left-sidenav.component.html",
   styleUrl: "./left-sidenav.component.css",
@@ -42,4 +41,6 @@ export class LeftSidenavComponent implements OnDestroy {
   ngOnDestroy(): void {
     this._mobileQuery.removeEventListener("change", this._mobileQueryListener);
   }
+
+  openSettings() {}
 }

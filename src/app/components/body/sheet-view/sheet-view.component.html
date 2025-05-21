@@ -1,0 +1,67 @@
+<h2 class="file-name">{{ fileName }}</h2>
+
+<mat-table
+  #table
+  [dataSource]="gradeBook"
+  class="mat-elevation-z8"
+  cdkDropList
+  (cdkDropListDropped)="drop($event)"
+  cdkDropListData="gradeBook"
+>
+  <!-- Assessments Column -->
+  <ng-container matColumnDef="assessment">
+    <mat-header-cell *matHeaderCellDef>
+      <mat-icon class="assessment-icon">school</mat-icon>
+      <span>Assessment</span>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let gradeBook">
+      <mat-icon class="drag-cursor">reorder</mat-icon>
+      <span>{{ gradeBook.assessment }}</span>
+    </mat-cell>
+    <mat-footer-cell *matFooterCellDef>
+      <mat-icon class="invisible-icon">airport_shuttle</mat-icon>
+      <span>Total</span>
+    </mat-footer-cell>
+  </ng-container>
+
+  <!-- Grade Column -->
+  <ng-container matColumnDef="grade">
+    <mat-header-cell *matHeaderCellDef>Grade</mat-header-cell>
+    <mat-cell *matCellDef="let gradeBook">{{ gradeBook.grade }}</mat-cell>
+    <mat-footer-cell *matFooterCellDef>
+      Letter Grade: {{ getLetterGrade() }}
+    </mat-footer-cell>
+  </ng-container>
+
+  <!-- Weight Column -->
+  <ng-container matColumnDef="weight">
+    <mat-header-cell *matHeaderCellDef>Weight</mat-header-cell>
+    <mat-cell *matCellDef="let gradeBook">{{
+      gradeBook.weight | percent
+    }}</mat-cell>
+    <mat-footer-cell *matFooterCellDef>{{
+      getTotalWeight() | percent
+    }}</mat-footer-cell>
+  </ng-container>
+
+  <!-- Contribution Column -->
+  <ng-container matColumnDef="contribution">
+    <mat-header-cell *matHeaderCellDef>Contribution</mat-header-cell>
+    <mat-cell *matCellDef="let row">{{ getContribution(row) }}</mat-cell>
+    <mat-footer-cell *matFooterCellDef>{{
+      getTotalContribution()
+    }}</mat-footer-cell>
+  </ng-container>
+
+  <mat-header-row
+    *matHeaderRowDef="displayedColumns; sticky: true"
+  ></mat-header-row>
+  <mat-row
+    *matRowDef="let row; columns: displayedColumns"
+    cdkDrag
+    [cdkDragData]="row"
+  ></mat-row>
+  <mat-footer-row
+    *matFooterRowDef="displayedColumns; sticky: true"
+  ></mat-footer-row>
+</mat-table>

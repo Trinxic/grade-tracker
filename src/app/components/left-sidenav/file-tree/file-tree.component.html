@@ -1,14 +1,21 @@
-<h1>File Tree</h1>
-
-<mat-tree #tree [dataSource]="dataSource" [childrenAccessor]="childrenAccessor">
-  <!-- This is the tree node template for leaf nodes -->
-  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-    <!-- use a disabled button to provide padding for tree leaf -->
+<mat-tree
+  #tree
+  [dataSource]="dataSource"
+  [childrenAccessor]="childrenAccessor"
+  cdkDropList
+  (cdkDropListDropped)="drop($event)"
+  [cdkDropListData]="dataSource"
+>
+  <!-- leaf node -->
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding cdkDrag>
     <button mat-icon-button disabled></button>
+    <mat-icon>description</mat-icon>
     {{ node.name }}
   </mat-tree-node>
-  <!-- This is the tree node template for expandable nodes -->
+
+  <!-- nested node(s) -->
   <mat-tree-node
+    cdkDrag
     *matTreeNodeDef="let node; when: hasChild"
     matTreeNodePadding
     matTreeNodeToggle
@@ -20,13 +27,9 @@
       [attr.aria-label]="'Toggle ' + node.name"
     >
       <mat-icon class="mat-icon-rtl-mirror">
-        {{ tree.isExpanded(node) ? "expand_more" : "chevron_right" }}
+        {{ tree.isExpanded(node) ? "folder_open" : "folder" }}
       </mat-icon>
     </button>
     {{ node.name }}
   </mat-tree-node>
 </mat-tree>
-
-<button mat-icon-button class="settings-button">
-  <mat-icon>settings</mat-icon>
-</button>

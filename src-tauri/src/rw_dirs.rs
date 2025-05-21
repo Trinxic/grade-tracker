@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::{fs, path::Path};
 
 #[derive(Serialize)]
