@@ -28,7 +28,25 @@
           <span>Assessment</span>
         </mat-header-cell>
         <mat-cell *matCellDef="let assessments">
-          <span>{{ assessments.assessment }}</span>
+          <ng-container
+            *ngIf="
+              !isEditing(bookIndex, assessments, 'assessment');
+              else editAssessment
+            "
+          >
+            <span (click)="startEdit(bookIndex, assessments, 'assessment')">{{
+              assessments.assessment
+            }}</span>
+          </ng-container>
+          <ng-template #editAssessment>
+            <input
+              matInput
+              [(ngModel)]="editingCell!.currentValue"
+              (keydown.enter)="finishEdit()"
+              (keydown.escape)="cancelEdit()"
+              autofocus
+            />
+          </ng-template>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef>
           <span>Total</span>
@@ -38,7 +56,24 @@
       <!-- Grade Column -->
       <ng-container matColumnDef="grade">
         <mat-header-cell *matHeaderCellDef>Grade</mat-header-cell>
-        <mat-cell *matCellDef="let gradeBook">{{ gradeBook.grade }}</mat-cell>
+        <mat-cell *matCellDef="let assessments">
+          <ng-container
+            *ngIf="!isEditing(bookIndex, assessments, 'grade'); else editGrade"
+          >
+            <span (click)="startEdit(bookIndex, assessments, 'grade')">{{
+              assessments.grade | number: ".2-2"
+            }}</span>
+          </ng-container>
+          <ng-template #editGrade>
+            <input
+              matInput
+              [(ngModel)]="editingCell!.currentValue"
+              (keydown.enter)="finishEdit()"
+              (keydown.escape)="cancelEdit()"
+              autofocus
+            />
+          </ng-template>
+        </mat-cell>
         <mat-footer-cell *matFooterCellDef>
           Letter Grade: {{ getLetterGrade(gradeBook.assessments) }}
         </mat-footer-cell>
@@ -47,9 +82,27 @@
       <!-- Weight Column -->
       <ng-container matColumnDef="weight">
         <mat-header-cell *matHeaderCellDef>Weight</mat-header-cell>
-        <mat-cell *matCellDef="let gradeBook">{{
-          gradeBook.weight | percent
-        }}</mat-cell>
+        <mat-cell *matCellDef="let assessments">
+          <ng-container
+            *ngIf="
+              !isEditing(bookIndex, assessments, 'weight');
+              else editWeight
+            "
+          >
+            <span (click)="startEdit(bookIndex, assessments, 'weight')">{{
+              assessments.weight | percent
+            }}</span>
+          </ng-container>
+          <ng-template #editWeight>
+            <input
+              matInput
+              [(ngModel)]="editingCell!.currentValue"
+              (keydown.enter)="finishEdit()"
+              (keydown.escape)="cancelEdit()"
+              autofocus
+            />
+          </ng-template>
+        </mat-cell>
         <mat-footer-cell *matFooterCellDef>{{
           getTotalWeight(gradeBook.assessments) | percent
         }}</mat-footer-cell>
@@ -58,8 +111,8 @@
       <!-- Contribution Column -->
       <ng-container matColumnDef="contribution">
         <mat-header-cell *matHeaderCellDef>Contribution</mat-header-cell>
-        <mat-cell *matCellDef="let row">{{
-          getContribution(row) | number: ".2-2"
+        <mat-cell *matCellDef="let assessments">{{
+          getContribution(assessments) | number: ".2-2"
         }}</mat-cell>
         <mat-footer-cell *matFooterCellDef>{{
           getTotalContribution(gradeBook.assessments) | number: ".2-2"

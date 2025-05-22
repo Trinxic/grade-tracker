@@ -6,6 +6,11 @@
   overflow: auto;
 }
 
+.clickable {
+  cursor: pointer;
+  text-decoration: bold;
+}
+
 .course-name {
   margin-left: 16px;
 }
