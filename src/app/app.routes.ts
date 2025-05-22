@@ -9,7 +9,7 @@ import { SearchFilesComponent } from "./components/left-sidenav/search-files/sea
 export const routes: Routes = [
   {
     path: "",
-    redirectTo: "home",
+    redirectTo: "sheet-view(sidenav:file-tree)",
     pathMatch: "full",
   },
   {

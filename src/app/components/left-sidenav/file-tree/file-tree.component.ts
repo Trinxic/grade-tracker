@@ -65,15 +65,19 @@ export class FileTreeComponent implements OnInit {
   }
 
   /**
-   * Obtain the file structure from the backend and formats it as a FileNode object.
+   * Obtains the file structure from the backend and formats it as a FileNode object.
    */
   private async getFileTree(path: string): Promise<FileNode[]> {
+    let returnWithParent: boolean = false; // in case I want to change this later
     try {
       const fileTree = await invoke<FileNode>("get_file_tree", {
         root: path,
       });
-      return [fileTree];
-      // return fileTree.children || [];
+      if (returnWithParent) {
+        return [fileTree];
+      } else {
+        return fileTree.children || [];
+      }
     } catch (error) {
       console.error("Error fetching file tree: ", error);
       return [];

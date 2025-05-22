@@ -6,12 +6,14 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatListModule } from "@angular/material/list";
 import { RouterLink, RouterOutlet } from "@angular/router";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /** @title Responsive sidenav */
 @Component({
   selector: "app-left-sidenav",
   imports: [
     MatToolbarModule,
+    MatTooltipModule,
     MatButtonModule,
     MatIconModule,
     MatSidenavModule,

@@ -1,0 +1,122 @@
+[
+  {
+    "index": 1,
+    "courseName": "Algorithms",
+    "assessments": [
+      {
+        "index": 1,
+        "assessment": "Quiz 1",
+        "grade": 88,
+        "weight": 0.10
+      },
+      {
+        "index": 2,
+        "assessment": "Quiz 2",
+        "grade": 92,
+        "weight": 0.10
+      },
+      {
+        "index": 3,
+        "assessment": "Midterm Exam",
+        "grade": 85,
+        "weight": 0.30
+      },
+      {
+        "index": 4,
+        "assessment": "Final Exam",
+        "grade": 90,
+        "weight": 0.50
+      }
+    ]
+  },
+  {
+    "index": 2,
+    "courseName": "Operating Systems",
+    "assessments": [
+      {
+        "index": 1,
+        "assessment": "Lab 1",
+        "grade": 80,
+        "weight": 0.10
+      },
+      {
+        "index": 2,
+        "assessment": "Lab 2",
+        "grade": 85,
+        "weight": 0.10
+      },
+      {
+        "index": 3,
+        "assessment": "Midterm Exam",
+        "grade": 78,
+        "weight": 0.30
+      },
+      {
+        "index": 4,
+        "assessment": "Final Exam",
+        "grade": 88,
+        "weight": 0.50
+      }
+    ]
+  },
+  {
+    "index": 3,
+    "courseName": "Quantum Computing",
+    "assessments": [
+      {
+        "index": 1,
+        "assessment": "Homework",
+        "grade": 95,
+        "weight": 0.20
+      },
+      {
+        "index": 2,
+        "assessment": "Project",
+        "grade": 89,
+        "weight": 0.30
+      },
+      {
+        "index": 3,
+        "assessment": "Midterm Exam",
+        "grade": 82,
+        "weight": 0.25
+      },
+      {
+        "index": 4,
+        "assessment": "Final Exam",
+        "grade": 87,
+        "weight": 0.25
+      }
+    ]
+  },
+  {
+    "index": 4,
+    "courseName": "Software Design Patterns",
+    "assessments": [
+      {
+        "index": 1,
+        "assessment": "Assignment 1",
+        "grade": 91,
+        "weight": 0.20
+      },
+      {
+        "index": 2,
+        "assessment": "Assignment 2",
+        "grade": 94,
+        "weight": 0.20
+      },
+      {
+        "index": 3,
+        "assessment": "Midterm Exam",
+        "grade": 88,
+        "weight": 0.25
+      },
+      {
+        "index": 4,
+        "assessment": "Final Exam",
+        "grade": 92,
+        "weight": 0.35
+      }
+    ]
+  }
+]

@@ -1,7 +1,15 @@
 <div class="container" [class.is-mobile]="isMobile()">
   <mat-toolbar class="toolbar">
-    <button mat-icon-button (click)="snav.toggle()">
-      <mat-icon>menu</mat-icon>
+    <button
+      mat-icon-button
+      [matTooltip]="snav.opened ? 'Collapse' : 'Expand'"
+      matTooltipPosition="right"
+      matTooltipShowDelay="750"
+      matTooltipHideDelay="50"
+      (click)="snav.toggle()"
+      style="transform: scaleX(-1)"
+    >
+      <mat-icon>view_sidebar</mat-icon>
     </button>
     <h1 class="app-name">Grade Tracker</h1>
     <span class="spacer"></span>

@@ -1,67 +1,85 @@
-<h2 class="file-name">{{ fileName }}</h2>
+<ng-container *ngFor="let gradeBook of gradeBooks; let bookIndex = index">
+  <div class="table-container">
+    <h3 class="course-name">{{ gradeBook.courseName }}</h3>
+    <mat-table
+      #table
+      [dataSource]="gradeBook.assessments"
+      class="mat-elevation-z8"
+      cdkDropList
+      cdkDropListData="gradeBook.assessments"
+      (cdkDropListDropped)="drop($event, gradeBook.assessments, table)"
+    >
+      <!-- Icon Column -->
+      <ng-container matColumnDef="icon">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-icon class="assessment-icon">school</mat-icon>
+        </mat-header-cell>
+        <mat-cell *matCellDef>
+          <mat-icon class="drag-cursor" style="">reorder</mat-icon>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+          <mat-icon style="visibility: hidden">airport_shuttle</mat-icon>
+        </mat-footer-cell>
+      </ng-container>
 
-<mat-table
-  #table
-  [dataSource]="gradeBook"
-  class="mat-elevation-z8"
-  cdkDropList
-  (cdkDropListDropped)="drop($event)"
-  cdkDropListData="gradeBook"
->
-  <!-- Assessments Column -->
-  <ng-container matColumnDef="assessment">
-    <mat-header-cell *matHeaderCellDef>
-      <mat-icon class="assessment-icon">school</mat-icon>
-      <span>Assessment</span>
-    </mat-header-cell>
-    <mat-cell *matCellDef="let gradeBook">
-      <mat-icon class="drag-cursor">reorder</mat-icon>
-      <span>{{ gradeBook.assessment }}</span>
-    </mat-cell>
-    <mat-footer-cell *matFooterCellDef>
-      <mat-icon class="invisible-icon">airport_shuttle</mat-icon>
-      <span>Total</span>
-    </mat-footer-cell>
-  </ng-container>
+      <!-- Assessments Column -->
+      <ng-container matColumnDef="assessment">
+        <mat-header-cell *matHeaderCellDef>
+          <span>Assessment</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let assessments">
+          <span>{{ assessments.assessment }}</span>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+          <span>Total</span>
+        </mat-footer-cell>
+      </ng-container>
 
-  <!-- Grade Column -->
-  <ng-container matColumnDef="grade">
-    <mat-header-cell *matHeaderCellDef>Grade</mat-header-cell>
-    <mat-cell *matCellDef="let gradeBook">{{ gradeBook.grade }}</mat-cell>
-    <mat-footer-cell *matFooterCellDef>
-      Letter Grade: {{ getLetterGrade() }}
-    </mat-footer-cell>
-  </ng-container>
+      <!-- Grade Column -->
+      <ng-container matColumnDef="grade">
+        <mat-header-cell *matHeaderCellDef>Grade</mat-header-cell>
+        <mat-cell *matCellDef="let gradeBook">{{ gradeBook.grade }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+          Letter Grade: {{ getLetterGrade(gradeBook.assessments) }}
+        </mat-footer-cell>
+      </ng-container>
 
-  <!-- Weight Column -->
-  <ng-container matColumnDef="weight">
-    <mat-header-cell *matHeaderCellDef>Weight</mat-header-cell>
-    <mat-cell *matCellDef="let gradeBook">{{
-      gradeBook.weight | percent
-    }}</mat-cell>
-    <mat-footer-cell *matFooterCellDef>{{
-      getTotalWeight() | percent
-    }}</mat-footer-cell>
-  </ng-container>
+      <!-- Weight Column -->
+      <ng-container matColumnDef="weight">
+        <mat-header-cell *matHeaderCellDef>Weight</mat-header-cell>
+        <mat-cell *matCellDef="let gradeBook">{{
+          gradeBook.weight | percent
+        }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{
+          getTotalWeight(gradeBook.assessments) | percent
+        }}</mat-footer-cell>
+      </ng-container>
 
-  <!-- Contribution Column -->
-  <ng-container matColumnDef="contribution">
-    <mat-header-cell *matHeaderCellDef>Contribution</mat-header-cell>
-    <mat-cell *matCellDef="let row">{{ getContribution(row) }}</mat-cell>
-    <mat-footer-cell *matFooterCellDef>{{
-      getTotalContribution()
-    }}</mat-footer-cell>
-  </ng-container>
+      <!-- Contribution Column -->
+      <ng-container matColumnDef="contribution">
+        <mat-header-cell *matHeaderCellDef>Contribution</mat-header-cell>
+        <mat-cell *matCellDef="let row">{{
+          getContribution(row) | number: ".2-2"
+        }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{
+          getTotalContribution(gradeBook.assessments) | number: ".2-2"
+        }}</mat-footer-cell>
+      </ng-container>
 
-  <mat-header-row
-    *matHeaderRowDef="displayedColumns; sticky: true"
-  ></mat-header-row>
-  <mat-row
-    *matRowDef="let row; columns: displayedColumns"
-    cdkDrag
-    [cdkDragData]="row"
-  ></mat-row>
-  <mat-footer-row
-    *matFooterRowDef="displayedColumns; sticky: true"
-  ></mat-footer-row>
-</mat-table>
+      <mat-header-row
+        *matHeaderRowDef="displayedColumns; sticky: true"
+        style="border-bottom: 1px solid #e0e0e0"
+      ></mat-header-row>
+      <mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        cdkDrag
+        cdkDragBoundary=".mat-elevation-z8"
+        [cdkDragData]="row"
+      ></mat-row>
+      <mat-footer-row
+        *matFooterRowDef="displayedColumns; sticky: true"
+        style="border-top: 1px solid #e0e0e0"
+      ></mat-footer-row>
+    </mat-table>
+  </div>
+</ng-container>

@@ -1,6 +1,7 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 // use tauri::{TitleBarStyle, WebviewUrl, WebviewWindowBuilder};
 mod rw_dirs;
+mod rw_sems;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -12,7 +13,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, rw_dirs::get_file_tree])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            rw_dirs::get_file_tree,
+            rw_sems::get_courses
+        ])
         // .setup(|app| {
         //     // ----- MacOS : Hide Titlebar ----- //
         //     #[cfg(target_os = "macos")] // was not here
