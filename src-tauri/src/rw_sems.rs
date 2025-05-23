@@ -3,7 +3,6 @@ use std::{fs, path::Path};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Assessment {
-    pub index: u32,
     pub assessment: String,
     pub grade: f64,
     pub weight: f64,
@@ -32,4 +31,12 @@ fn read_semester_json(path: &Path) -> std::io::Result<Vec<GradeBook>> {
 pub fn get_courses(root: String) -> Result<Vec<GradeBook>, String> {
     let path = Path::new(&root);
     read_semester_json(path).map_err(|e| format!("Failed to read: `{}`: {}", root, e))
+}
+
+#[tauri::command]
+pub fn write_semester_json(root: String, grade_books: Vec<GradeBook>) -> Result<(), String> {
+    let data = serde_json::to_string_pretty(&grade_books)
+        .map_err(|e| format!("Serialization error: {}", e))?;
+    fs::write(&root, data).map_err(|e| format!("Failed to write: `{}`: {}", root, e))?;
+    Ok(())
 }

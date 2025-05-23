@@ -1,6 +1,12 @@
 <ng-container *ngFor="let gradeBook of gradeBooks; let bookIndex = index">
   <div class="table-container">
-    <h3 class="course-name">{{ gradeBook.courseName }}</h3>
+    <div>
+      <h3 class="course-name">{{ gradeBook.courseName }}</h3>
+      <button mat-raised-button (click)="doSave()" [disabled]="isSaved">
+        Save
+        <mat-icon *ngIf="isSaved">check</mat-icon>
+      </button>
+    </div>
     <mat-table
       #table
       [dataSource]="gradeBook.assessments"
@@ -128,6 +134,8 @@
         cdkDrag
         cdkDragBoundary=".mat-elevation-z8"
         [cdkDragData]="row"
+        (contextmenu)="onRowMenu($event, row, gradeBook.assessments, table)"
+
       ></mat-row>
       <mat-footer-row
         *matFooterRowDef="displayedColumns; sticky: true"
@@ -136,3 +144,30 @@
     </mat-table>
   </div>
 </ng-container>
+
+<div
+  #menuTrigger="matMenuTrigger"
+  [matMenuTriggerFor]="rowMenu"
+  [style.top]="contextMenuPosition.y"
+  [style.left]="contextMenuPosition.x"
+  style="position: fixed; width: 0; height: 0;"
+  ></div>
+
+<mat-menu #rowMenu="matMenu">
+  <button mat-menu-item (click)="manipulateRow('insertAbove')">
+    <mat-icon>arrow_upward</mat-icon>
+    <span>Insert Row Above</span>
+  </button>
+  <button mat-menu-item (click)="manipulateRow('insertBelow')">
+    <mat-icon>arrow_downward</mat-icon>
+    <span>Insert Row Below</span>
+  </button>
+  <button mat-menu-item (click)="manipulateRow('duplicate')">
+    <mat-icon>content_copy</mat-icon>
+    <span>Duplicate Row</span>
+  </button>
+  <button mat-menu-item (click)="manipulateRow('delete')">
+    <mat-icon>delete</mat-icon>
+    <span>Delete Row</span>
+  </button>
+</mat-menu>

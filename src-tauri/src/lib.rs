@@ -16,7 +16,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             rw_dirs::get_file_tree,
-            rw_sems::get_courses
+            rw_sems::get_courses,
+            rw_sems::write_semester_json,
         ])
         // .setup(|app| {
         //     // ----- MacOS : Hide Titlebar ----- //

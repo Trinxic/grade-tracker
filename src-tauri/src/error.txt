@@ -1,0 +1,8 @@
+Error executing Lua callback: /home/trinxic/.config/nvim/lua/plugins/autoformatting.lua:40: attempt to call field 'get_formatters' (a nil value)
+stack traceback:
+        /home/trinxic/.config/nvim/lua/plugins/autoformatting.lua:40: in function 'formatters'
+        ...ocal/share/nvim/lazy/conform.nvim/lua/conform/health.lua:10: in function 'get_formatter_filetypes'
+        ...ocal/share/nvim/lazy/conform.nvim/lua/conform/health.lua:114: in function 'append_formatter_info'
+        ...ocal/share/nvim/lazy/conform.nvim/lua/conform/health.lua:141: in function 'append_formatters'
+        ...ocal/share/nvim/lazy/conform.nvim/lua/conform/health.lua:159: in function 'show_window'
+        ...c/.local/share/nvim/lazy/conform.nvim/plugin/conform.lua:2: in function <...c/.local/share/nvim/lazy/conform.nvim/plugin/conform.lua:1>

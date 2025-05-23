@@ -1,4 +1,10 @@
-import { Component, ViewChild, QueryList, OnInit } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  QueryList,
+  ViewChild,
+} from "@angular/core";
 import { MatTable, MatTableModule } from "@angular/material/table";
 import { CommonModule, NgFor, PercentPipe } from "@angular/common";
 import {
@@ -8,25 +14,16 @@ import {
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 import { MatIconModule } from "@angular/material/icon";
-import gradeBooks from "./grade-books.json";
 import { invoke } from "@tauri-apps/api/core";
 import { MCMASTER_LETTER_GRADES } from "./grade-scales";
 import { homeDir, join } from "@tauri-apps/api/path";
 import { FormsModule } from "@angular/forms";
-
-export interface Assessment {
-  index: number;
-  assessment: string;
-  grade: number;
-  weight: number;
-  contribution?: number;
-}
-
-export interface GradeBook {
-  index: number;
-  courseName: string;
-  assessments: Assessment[];
-}
+import { MatMenuModule } from "@angular/material/menu";
+import { MatMenuTrigger } from "@angular/material/menu";
+import { HostListener } from "@angular/core";
+import { Assessment, GradeBook } from "./interfaces";
+import { Subject, Subscription } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 
 /**
  * @title Gradebook Table
@@ -41,8 +38,9 @@ export interface GradeBook {
     CdkDrag,
     CommonModule,
     FormsModule,
-    MatTableModule,
     MatIconModule,
+    MatMenuModule,
+    MatTableModule,
     NgFor,
     PercentPipe,
   ],
@@ -50,7 +48,7 @@ export interface GradeBook {
   styleUrl: "./sheet-view.component.css",
 })
 export class SheetViewComponent implements OnInit {
-  courseName = "Test Course";
+  courseName = "grade-books"; // TODO: Get from JSON file name
   displayedColumns: string[] = [
     "icon",
     "assessment",
@@ -60,7 +58,8 @@ export class SheetViewComponent implements OnInit {
   ];
   gradeBooks: GradeBook[] = [];
 
-  @ViewChild(MatTable) table!: QueryList<MatTable<Assessment>>;
+  @ViewChild(MatTable) tables!: QueryList<MatTable<Assessment>>;
+  @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
 
   async ngOnInit(): Promise<void> {
     const home: string = await homeDir();
@@ -68,9 +67,21 @@ export class SheetViewComponent implements OnInit {
       home,
       "Documents",
       "Semesters",
-      "grade-books.json",
+      this.courseName + ".json",
     );
     this.gradeBooks = await this.getGradeBooks(semestersPath);
+    this.pushHistory();
+
+    this.saveSubscription = this.saveTrigger
+      .pipe(debounceTime(3000))
+      .subscribe(() => this.doSave());
+  }
+
+  ngOnDestroy(): void {
+    this.saveSubscription.unsubscribe();
+    if (!this.isSaved) {
+      this.doSave();
+    }
   }
 
   protected async getGradeBooks(path: string): Promise<GradeBook[]> {
@@ -90,9 +101,73 @@ export class SheetViewComponent implements OnInit {
     gradeBook: Assessment[],
     table: MatTable<Assessment>,
   ) {
+    this.markUnsaved();
+    this.pushHistory();
     const previousIndex = gradeBook.findIndex((d) => d === event.item.data);
     moveItemInArray(gradeBook, previousIndex, event.currentIndex);
     table.renderRows();
+  }
+
+  /* --- Saving Changes --- */
+  isSaved = true;
+  private saveTrigger = new Subject<void>();
+  private saveSubscription!: Subscription;
+
+  private markUnsaved() {
+    this.isSaved = false;
+    this.saveTrigger.next();
+  }
+
+  async doSave() {
+    if (this.isSaved) return;
+    try {
+      const home: string = await homeDir();
+      const semestersPath: string = await join(
+        home,
+        "Documents",
+        "Semesters",
+        this.courseName + ".json",
+      );
+      await invoke("write_semester_json", {
+        root: semestersPath,
+        gradeBooks: this.gradeBooks,
+      });
+      this.isSaved = true;
+      console.log("Saved successfully");
+    } catch (err) {
+      console.error("Error saving grade books: ", err);
+    }
+  }
+
+  /* --- History Management --- */
+  private history: GradeBook[][] = [];
+  private historyIndex = -1;
+  private maxHistory = 50;
+
+  private pushHistory() {
+    this.history.splice(++this.historyIndex);
+
+    const snapshot = structuredClone(this.gradeBooks);
+    this.history.push(snapshot);
+
+    if (this.history.length > this.maxHistory) {
+      this.history.shift();
+      this.historyIndex--;
+    }
+  }
+
+  undo() {
+    if (this.historyIndex > 0) {
+      this.gradeBooks = structuredClone(this.history[--this.historyIndex]);
+    }
+  }
+
+  @HostListener("window:keydown", ["$event"])
+  handleKeyDown(event: KeyboardEvent) {
+    if ((event.ctrlKey || event.metaKey) && event.key === "z") {
+      event.preventDefault();
+      this.undo();
+    }
   }
 
   /* --- Populating Table Cells --- */
@@ -130,6 +205,59 @@ export class SheetViewComponent implements OnInit {
     return "N/A";
   }
 
+  /* --- Context Menu --- */
+  contextMenuPosition = { x: "0px", y: "0px" };
+  contextMenuRow!: Assessment;
+  contextMenuAssessments!: Assessment[];
+  contextMenuTable!: MatTable<Assessment>;
+
+  onRowMenu(
+    event: MouseEvent,
+    row: Assessment,
+    assessments: Assessment[],
+    table: MatTable<Assessment>,
+  ) {
+    event.preventDefault();
+    this.contextMenuRow = row;
+    this.contextMenuAssessments = assessments;
+    this.contextMenuTable = table;
+    this.contextMenuPosition.x = event.clientX + "px";
+    this.contextMenuPosition.y = event.clientY + "px";
+    this.menuTrigger.openMenu();
+  }
+
+  manipulateRow(action: string) {
+    this.markUnsaved();
+    this.pushHistory();
+    const index = this.contextMenuAssessments.indexOf(this.contextMenuRow);
+    if (index > -1) {
+      switch (action) {
+        case "insertAbove":
+          this.contextMenuAssessments.splice(index, 0, {
+            assessment: "New Assessment",
+            grade: 0,
+            weight: 0,
+          });
+          break;
+        case "insertBelow":
+          this.contextMenuAssessments.splice(index + 1, 0, {
+            assessment: "New Assessment",
+            grade: 0,
+            weight: 0,
+          });
+          break;
+        case "duplicate":
+          const dupe = { ...this.contextMenuRow }; // shallow copy
+          this.contextMenuAssessments.splice(index + 1, 0, dupe);
+          break;
+        case "delete":
+          this.contextMenuAssessments.splice(index, 1);
+          break;
+      }
+      this.contextMenuTable.renderRows();
+    }
+  }
+
   /* --- Editing Cells --- */
   editingCell: {
     bookIndex: number;
@@ -155,6 +283,8 @@ export class SheetViewComponent implements OnInit {
 
   finishEdit() {
     if (!this.editingCell) return;
+    this.markUnsaved();
+    this.pushHistory();
     const { row, field, currentValue } = this.editingCell;
 
     if (field === "grade" || field === "weight") {
