@@ -7,6 +7,8 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatListModule } from "@angular/material/list";
 import { RouterLink, RouterOutlet } from "@angular/router";
 import { MatTooltipModule } from "@angular/material/tooltip";
+// import { open } from "@tauri-apps/api/dialog";
+import { FileTreeService } from "@services/file-tree/file-tree.service";
 
 /** @title Responsive sidenav */
 @Component({
@@ -45,4 +47,17 @@ export class LeftSidenavComponent implements OnDestroy {
   }
 
   openSettings() {}
+
+  async chooseFolder() {
+    const selected = await open({
+      directory: true,
+      multiple: false,
+      title: "Select a folder",
+    });
+
+    const folder = Array.isArray(selected) ? selected[0] : selected;
+    if (typeof folder === "string") {
+      this.fileTree;
+    }
+  }
 }

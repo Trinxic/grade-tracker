@@ -1,5 +1,5 @@
 <div class="container" [class.is-mobile]="isMobile()">
-  <mat-toolbar class="toolbar">
+  <mat-toolbar class="main-toolbar">
     <button
       mat-icon-button
       [matTooltip]="snav.opened ? 'Collapse' : 'Expand'"
@@ -29,9 +29,11 @@
       [fixedInViewport]="isMobile()"
       fixedTopGap="56"
     >
-      <mat-toolbar class="nav-top-bar">
+      <mat-toolbar class="nav-toolbar">
         <button
           mat-icon-button
+          [matMenuTriggerFor]="folderMenu"
+          (contextmenu)="$event.preventDefault()"
           [routerLink]="[{ outlets: { sidenav: ['file-tree'] } }]"
         >
           <mat-icon>folder</mat-icon>
@@ -61,3 +63,10 @@
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>
+
+<mat-menu #folderMenu="matMenu">
+  <button mat-menu-item (click)="chooseFolder()">
+    <mat-icon>folder_open</mat-icon>
+    Choose Folder
+  </button>
+</mat-menu>

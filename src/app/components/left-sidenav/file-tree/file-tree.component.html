@@ -1,35 +1,32 @@
 <mat-tree
   #tree
-  [dataSource]="dataSource"
+  [dataSource]="dataSource()"
   [childrenAccessor]="childrenAccessor"
-  cdkDropList
-  (cdkDropListDropped)="drop($event)"
-  [cdkDropListData]="dataSource"
 >
   <!-- leaf node -->
-  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding cdkDrag>
-    <button mat-icon-button disabled></button>
-    <mat-icon>description</mat-icon>
-    {{ node.name }}
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+    <button class="file-button" mat-button (click)="onNodeClick(node)">
+      <mat-icon>description</mat-icon>
+      {{ node.stem }}
+    </button>
   </mat-tree-node>
 
   <!-- nested node(s) -->
   <mat-tree-node
-    cdkDrag
     *matTreeNodeDef="let node; when: hasChild"
     matTreeNodePadding
     matTreeNodeToggle
-    [cdkTreeNodeTypeaheadLabel]="node.name"
+    [cdkTreeNodeTypeaheadLabel]="node.stem"
   >
     <button
       mat-icon-button
       matTreeNodeToggle
-      [attr.aria-label]="'Toggle ' + node.name"
+      [attr.aria-label]="'Toggle ' + node.stem"
     >
       <mat-icon class="mat-icon-rtl-mirror">
         {{ tree.isExpanded(node) ? "folder_open" : "folder" }}
       </mat-icon>
     </button>
-    {{ node.name }}
+    {{ node.stem }}
   </mat-tree-node>
 </mat-tree>

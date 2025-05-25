@@ -1,7 +1,7 @@
 import { Injectable, signal, effect } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { homeDir, join } from "@tauri-apps/api/path";
-import type { GradeBook } from "../../components/body/sheet-view/interfaces";
+import type { GradeBook } from "@components/body/sheet-view/interfaces";
 
 @Injectable({
   providedIn: "root",
@@ -20,14 +20,10 @@ export class GradeBooksService {
     });
   }
 
-  async load(fileName: string): Promise<void> {
+  async load(relFilePath: string): Promise<void> {
     const home = await homeDir();
-    const filePath = await join(
-      home,
-      "Documents",
-      "Semesters",
-      `${fileName}.json`,
-    );
+    const filePath = await join(home, "Documents", `${relFilePath}`);
+    console.log("Loading grade books from:", filePath);
     try {
       const data = await invoke<GradeBook[]>("get_courses", {
         root: filePath,

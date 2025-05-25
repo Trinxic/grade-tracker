@@ -1,13 +1,13 @@
-import { Injectable, signal } from "@angular/core";
+import { computed, Injectable, signal } from "@angular/core";
 import { join, homeDir } from "@tauri-apps/api/path";
 import { invoke } from "@tauri-apps/api/core";
 
 /**
  * FileNode represents a node in the file tree.
- * `export`?
  */
 export interface FileNode {
-  name: string;
+  path: string;
+  stem: string;
   isDirectory: boolean;
   children?: FileNode[];
 }
@@ -23,8 +23,7 @@ export class FileTreeService {
   semestersDir: string = "Semesters";
 
   fileTree = signal<FileNode[]>([]);
-  returnWithParent = signal(false);
-  currentFileName = signal<string>("");
+  returnWithRootNode = signal(false);
 
   // Add effects here
   constructor() {}
@@ -32,12 +31,12 @@ export class FileTreeService {
   /**
    * Obtains the file structure from the backend and formats it as a FileNode object.
    */
-  async getFileTree(filePath: string): Promise<void> {
+  async setFileTree(rootPath: string): Promise<void> {
     try {
       const fileTree = await invoke<FileNode>("get_file_tree", {
-        root: filePath,
+        root: rootPath,
       });
-      if (this.returnWithParent()) {
+      if (this.returnWithRootNode()) {
         this.fileTree.set([fileTree]);
       } else {
         this.fileTree.set(fileTree.children || []);

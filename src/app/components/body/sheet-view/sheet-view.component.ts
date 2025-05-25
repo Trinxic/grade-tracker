@@ -1,5 +1,6 @@
 // Personal imports
 import type { Assessment, GradeBook } from "./interfaces";
+import { FileTreeService } from "@services/file-tree/file-tree.service";
 import { GradeBookHistoryService } from "@services/grade-books/grade-book-history.service";
 import { GradeBooksService } from "@services/grade-books/grade-books.service";
 import {
@@ -52,7 +53,12 @@ import { MatTableModule, MatTable } from "@angular/material/table";
   styleUrls: ["./sheet-view.component.css"],
 })
 export class SheetViewComponent implements OnInit, OnDestroy {
-  semesterName = "grade-books";
+  constructor(
+    private fileTreeService: FileTreeService,
+    private gradeBooksService: GradeBooksService,
+    private historyService: GradeBookHistoryService,
+    private snackBar: MatSnackBar,
+  ) {}
 
   // Signal Streams
   gradeBooks = this.gradeBooksService.gradeBooks;
@@ -81,17 +87,10 @@ export class SheetViewComponent implements OnInit, OnDestroy {
   getTotalContribution = getTotalContribution;
   getLetterGrade = getLetterGrade;
 
-  constructor(
-    private gradeBooksService: GradeBooksService,
-    private historyService: GradeBookHistoryService,
-    private snackBar: MatSnackBar,
-  ) {}
-
   /**
    * Load initial data and initialze history
    */
   async ngOnInit(): Promise<void> {
-    await this.gradeBooksService.load(this.semesterName);
     this.historyService.snapshot(this.gradeBooksService.gradeBooks());
   }
 

@@ -8,6 +8,16 @@
   right: 0;
 }
 
+.main-toolbar {
+}
+
+.nav-toolbar {
+  flex: 0 0 auto;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
 .is-mobile .toolbar {
   position: fixed;
   /* Make sure the toolbar will stay on top of the content as it scrolls past. */
