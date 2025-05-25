@@ -3,7 +3,18 @@
   padding: 0 16px;
   border: 2px solid #e0e0e0;
   border-radius: 16px;
-  overflow: auto;
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  margin: 0 16px;
+  /* align-items: center; */
+  /* justify-content: space-between; */
+}
+
+.spacer {
+  flex: 1 1 auto;
 }
 
 .clickable {
@@ -12,7 +23,7 @@
 }
 
 .course-name {
-  margin-left: 16px;
+  /* margin-left: 16px; */
 }
 
 .mat-mdc-footer-row {

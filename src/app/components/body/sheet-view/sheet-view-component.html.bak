@@ -1,17 +1,16 @@
-<ng-container *ngFor="let gradeBook of gradeBooks(); let bookIndex = index">
+<ng-container *ngFor="let gradeBook of gradeBooks; let bookIndex = index">
   <div class="table-container">
     <div class="table-header">
       <h3 class="course-name">{{ gradeBook.courseName }}</h3>
       <span class="spacer"></span>
-      <h3><mat-icon *ngIf="isSaved()">check</mat-icon></h3>
+      <h3><mat-icon *ngIf="isSaved">check</mat-icon></h3>
     </div>
-
     <mat-table
       #table
       [dataSource]="gradeBook.assessments"
       class="mat-elevation-z8"
       cdkDropList
-      [cdkDropListData]="gradeBook.assessments"
+      cdkDropListData="gradeBook.assessments"
       (cdkDropListDropped)="drop($event, gradeBook.assessments, table)"
     >
       <!-- Icon Column -->
@@ -27,14 +26,21 @@
         </mat-footer-cell>
       </ng-container>
 
-      <!-- Assessment Column -->
+      <!-- Assessments Column -->
       <ng-container matColumnDef="assessment">
-        <mat-header-cell *matHeaderCellDef>Assessment</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef>
+          <span>Assessment</span>
+        </mat-header-cell>
         <mat-cell *matCellDef="let assessments">
-          <ng-container *ngIf="!isEditing(bookIndex, assessments, 'assessment'); else editAssessment">
-            <span (click)="startEdit(bookIndex, assessments, 'assessment')">
-              {{ assessments.assessment }}
-            </span>
+          <ng-container
+            *ngIf="
+              !isEditing(bookIndex, assessments, 'assessment');
+              else editAssessment
+            "
+          >
+            <span (click)="startEdit(bookIndex, assessments, 'assessment')">{{
+              assessments.assessment
+            }}</span>
           </ng-container>
           <ng-template #editAssessment>
             <input
@@ -46,17 +52,21 @@
             />
           </ng-template>
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef>
+          <span>Total</span>
+        </mat-footer-cell>
       </ng-container>
 
       <!-- Grade Column -->
       <ng-container matColumnDef="grade">
         <mat-header-cell *matHeaderCellDef>Grade</mat-header-cell>
         <mat-cell *matCellDef="let assessments">
-          <ng-container *ngIf="!isEditing(bookIndex, assessments, 'grade'); else editGrade">
-            <span (click)="startEdit(bookIndex, assessments, 'grade')">
-              {{ assessments.grade | number:'.2-2' }}
-            </span>
+          <ng-container
+            *ngIf="!isEditing(bookIndex, assessments, 'grade'); else editGrade"
+          >
+            <span (click)="startEdit(bookIndex, assessments, 'grade')">{{
+              assessments.grade | number: ".2-2"
+            }}</span>
           </ng-container>
           <ng-template #editGrade>
             <input
@@ -77,10 +87,15 @@
       <ng-container matColumnDef="weight">
         <mat-header-cell *matHeaderCellDef>Weight</mat-header-cell>
         <mat-cell *matCellDef="let assessments">
-          <ng-container *ngIf="!isEditing(bookIndex, assessments, 'weight'); else editWeight">
-            <span (click)="startEdit(bookIndex, assessments, 'weight')">
-              {{ assessments.weight | percent }}
-            </span>
+          <ng-container
+            *ngIf="
+              !isEditing(bookIndex, assessments, 'weight');
+              else editWeight
+            "
+          >
+            <span (click)="startEdit(bookIndex, assessments, 'weight')">{{
+              assessments.weight | percent
+            }}</span>
           </ng-container>
           <ng-template #editWeight>
             <input
@@ -92,45 +107,49 @@
             />
           </ng-template>
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef>
-          {{ getTotalWeight(gradeBook.assessments) | percent }}
-        </mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef>{{
+          getTotalWeight(gradeBook.assessments) | percent
+        }}</mat-footer-cell>
       </ng-container>
 
       <!-- Contribution Column -->
       <ng-container matColumnDef="contribution">
         <mat-header-cell *matHeaderCellDef>Contribution</mat-header-cell>
-        <mat-cell *matCellDef="let assessments">
-          {{ getContribution(assessments) | number:'.2-2' }}
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>
-          {{ getTotalContribution(gradeBook.assessments) | number:'.2-2' }}
-        </mat-footer-cell>
+        <mat-cell *matCellDef="let assessments">{{
+          getContribution(assessments) | number: ".2-2"
+        }}</mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{
+          getTotalContribution(gradeBook.assessments) | number: ".2-2"
+        }}</mat-footer-cell>
       </ng-container>
 
-      <!-- Header, Row, Footer -->
-      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"
-                      style="border-bottom:1px solid #e0e0e0">
-      </mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns"
-               cdkDrag cdkDragBoundary=".mat-elevation-z8"
-               [cdkDragData]="row"
-               (contextmenu)="onRowMenu($event, row, gradeBook.assessments, table)">
-      </mat-row>
-      <mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"
-                     style="border-top:1px solid #e0e0e0">
-      </mat-footer-row>
+      <mat-header-row
+        *matHeaderRowDef="displayedColumns; sticky: true"
+        style="border-bottom: 1px solid #e0e0e0"
+      ></mat-header-row>
+      <mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        cdkDrag
+        cdkDragBoundary=".mat-elevation-z8"
+        [cdkDragData]="row"
+        (contextmenu)="onRowMenu($event, row, gradeBook.assessments, table)"
+
+      ></mat-row>
+      <mat-footer-row
+        *matFooterRowDef="displayedColumns; sticky: true"
+        style="border-top: 1px solid #e0e0e0"
+      ></mat-footer-row>
     </mat-table>
   </div>
 </ng-container>
 
-<!-- Context Menu Trigger -->
-<div #menuTrigger="matMenuTrigger"
-     [matMenuTriggerFor]="rowMenu"
-     [style.top]="contextMenuPosition.y"
-     [style.left]="contextMenuPosition.x"
-     style="position:fixed;width:0;height:0">
-</div>
+<div
+  #menuTrigger="matMenuTrigger"
+  [matMenuTriggerFor]="rowMenu"
+  [style.top]="contextMenuPosition.y"
+  [style.left]="contextMenuPosition.x"
+  style="position: fixed; width: 0; height: 0;"
+  ></div>
 
 <mat-menu #rowMenu="matMenu">
   <button mat-menu-item (click)="manipulateRow('insertAbove')">
