@@ -49,12 +49,6 @@ export class FileTreeComponent implements OnInit {
     !!node.children && node.children.length > 0;
 
   async ngOnInit(): Promise<void> {
-    // const dirExists = await exists(this.semestersDir, {
-    //   baseDir: this.semestersBaseDir,
-    // });
-    // if (!dirExists) {
-    //   mkdir(this.semestersDir, { baseDir: this.semestersBaseDir });
-    // }
     const home: string = await homeDir();
     const semestersPath: string = await join(
       home,
