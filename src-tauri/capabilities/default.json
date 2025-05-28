@@ -7,11 +7,17 @@
   ],
   "permissions": [
     "core:default",
-    "opener:default",
+    "dialog:default",
     "fs:default",
     {
       "identifier": "fs:scope",
       "allow": [
+        {
+          "path": "$APPDATA/settings"
+        },
+        {
+          "path": "$APPDATA/settings/**"
+        },
         {
           "path": "$HOME/Documents/Semesters"
         },
@@ -20,6 +26,7 @@
         }
       ]
     },
-    "dialog:default"
+    "opener:default"
   ]
 }
+

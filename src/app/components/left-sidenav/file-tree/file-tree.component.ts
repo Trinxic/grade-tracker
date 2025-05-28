@@ -12,7 +12,7 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, computed, OnInit, ViewChild } from "@angular/core";
 
 // Angular Material
 import { MatButtonModule } from "@angular/material/button";

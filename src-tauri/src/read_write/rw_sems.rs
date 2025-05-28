@@ -18,10 +18,7 @@ pub struct GradeBook {
 }
 
 fn read_semester_json(path: &Path) -> std::io::Result<Vec<GradeBook>> {
-    // read the JSON file
     let json_list = fs::read_to_string(path)?;
-
-    // map the JSON data to the GradeBook struct
     let grade_books = serde_json::from_str::<Vec<GradeBook>>(&json_list)
         .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
     Ok(grade_books)

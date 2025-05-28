@@ -2,6 +2,7 @@ import { Injectable, signal, effect } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 import { homeDir, join } from "@tauri-apps/api/path";
 import type { GradeBook } from "@components/body/sheet-view/interfaces";
+import { message } from "@tauri-apps/plugin-dialog";
 
 @Injectable({
   providedIn: "root",
@@ -23,7 +24,6 @@ export class GradeBooksService {
   async load(relFilePath: string): Promise<void> {
     const home = await homeDir();
     const filePath = await join(home, "Documents", `${relFilePath}`);
-    console.log("Loading grade books from:", filePath);
     try {
       const data = await invoke<GradeBook[]>("get_courses", {
         root: filePath,
@@ -31,6 +31,10 @@ export class GradeBooksService {
       this.gradeBooks.set(data);
       this.isSaved.set(true);
     } catch (err) {
+      await message("Incorrect file type", {
+        title: "Load File",
+        kind: "error",
+      });
       console.error("Error loading grade books:", err);
     }
   }

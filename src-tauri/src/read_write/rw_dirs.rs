@@ -30,11 +30,25 @@ fn read_dir_recursive(path: &Path, base: &Path) -> std::io::Result<FileNode> {
     };
 
     if meta.is_dir() {
-        let mut children = Vec::new();
-        for entry in fs::read_dir(path)? {
-            let entry = entry?;
-            children.push(read_dir_recursive(&entry.path(), base)?);
-        }
+        let mut entries: Vec<_> = fs::read_dir(path)?.filter_map(|r| r.ok()).collect();
+
+        entries.sort_by(|a, b| {
+            let am = a.file_type().map(|t| t.is_dir()).unwrap_or(false);
+            let bm = b.file_type().map(|t| t.is_dir()).unwrap_or(false);
+            match (am, bm) {
+                (true, false) => std::cmp::Ordering::Less,
+                (false, true) => std::cmp::Ordering::Greater,
+                _ => a
+                    .file_name()
+                    .to_string_lossy()
+                    .cmp(&b.file_name().to_string_lossy()),
+            }
+        });
+
+        let children = entries
+            .into_iter()
+            .filter_map(|entry| read_dir_recursive(&entry.path(), base).ok())
+            .collect();
         node.children = Some(children);
     }
 
