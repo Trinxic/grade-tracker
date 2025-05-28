@@ -12,12 +12,13 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 
 // Angular Material
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatTreeModule } from "@angular/material/tree";
+import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 
 // Tauri
 import { join, homeDir } from "@tauri-apps/api/path";
@@ -31,6 +32,7 @@ import { join, homeDir } from "@tauri-apps/api/path";
     MatTreeModule,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     CdkDropList,
     CdkDrag,
     CommonModule,
@@ -46,6 +48,9 @@ export class FileTreeComponent implements OnInit {
   childrenAccessor = (node: FileNode) => node.children ?? [];
   hasChild = (_: number, node: FileNode) =>
     !!node.children && node.children.length > 0;
+
+  @ViewChild(MatMenuTrigger) fileTreeMenuTrigger!: MatMenuTrigger;
+  fileTreeMenuPosition = { x: "0px", y: "0px" };
 
   constructor(
     private fileTreeService: FileTreeService,
@@ -87,5 +92,28 @@ export class FileTreeComponent implements OnInit {
         event.currentIndex,
       );
     }
+  }
+
+  backgroundRightClick(event: MouseEvent): void {
+    event.preventDefault();
+    this.fileTreeMenuPosition.x = `${event.clientX}px`;
+    this.fileTreeMenuPosition.y = `${event.clientY}px`;
+    this.fileTreeMenuTrigger.openMenu();
+  }
+
+  newFolder(): void {
+    console.log("New folder action triggered");
+    // TODO: Implement new folder creation logic
+  }
+
+  newFile(): void {
+    console.log("New file action triggered");
+    // TODO: Implement new file creation logic
+  }
+
+  test(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopImmediatePropagation(); // prevents default contetx menu
+    console.log("Test action triggered");
   }
 }

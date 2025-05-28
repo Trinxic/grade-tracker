@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.file-tree {
+  flex: 1 1 auto;
+  overflow: hidden;
+  z-index: 4;
+}
+
+.file-tree-container {
+  flex: 1 1 auto;
+  overflow: hidden;
+  z-index: 1;
+}

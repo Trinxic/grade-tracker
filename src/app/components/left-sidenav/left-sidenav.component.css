@@ -11,11 +11,22 @@
 .main-toolbar {
 }
 
-.nav-toolbar {
+.sidenav-side {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidenav-side-toolbar {
   flex: 0 0 auto;
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+.sidenav-side-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
 }
 
 .is-mobile .toolbar {

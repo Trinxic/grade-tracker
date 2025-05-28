@@ -19,7 +19,7 @@
           "path": "$HOME/Documents/Semesters/**"
         }
       ]
-    }
+    },
+    "dialog:default"
   ]
 }
-
