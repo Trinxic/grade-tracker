@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { homeDir, join } from "@tauri-apps/api/path";
 import type { GradeBook } from "@components/body/sheet-view/interfaces";
 import { message } from "@tauri-apps/plugin-dialog";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
@@ -12,7 +13,7 @@ export class GradeBooksService {
   isSaved = signal(true);
   private autoSaveDelay!: ReturnType<typeof setTimeout>;
 
-  constructor() {
+  constructor(private router: Router) {
     effect(() => {
       if (!this.isSaved()) {
         clearTimeout(this.autoSaveDelay);
@@ -21,7 +22,7 @@ export class GradeBooksService {
     });
   }
 
-  async load(relFilePath: string): Promise<void> {
+  async load(relFilePath: string): Promise<string[]> {
     const home = await homeDir();
     const filePath = await join(home, "Documents", `${relFilePath}`);
     try {
@@ -30,12 +31,9 @@ export class GradeBooksService {
       });
       this.gradeBooks.set(data);
       this.isSaved.set(true);
+      return ["/sheet-view"];
     } catch (err) {
-      await message("Incorrect file type", {
-        title: "Load File",
-        kind: "error",
-      });
-      console.error("Error loading grade books:", err);
+      return ["/file-error"];
     }
   }
 

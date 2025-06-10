@@ -55,10 +55,12 @@
           <mat-icon>settings</mat-icon>
         </button>
       </mat-toolbar>
-      <router-outlet
-        name="sidenav"
-        class="sidenav-side-content"
-      ></router-outlet>
+      <ng-container>
+        <router-outlet
+          name="sidenav"
+          class="sidenav-side-content"
+        ></router-outlet>
+      </ng-container>
     </mat-sidenav>
 
     <mat-sidenav-content class="sidenav-main">

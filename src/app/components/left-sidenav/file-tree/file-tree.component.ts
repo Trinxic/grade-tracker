@@ -13,6 +13,7 @@ import {
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import { Component, computed, OnInit, ViewChild } from "@angular/core";
+import { Router } from "@angular/router";
 
 // Angular Material
 import { MatButtonModule } from "@angular/material/button";
@@ -21,7 +22,7 @@ import { MatTreeModule } from "@angular/material/tree";
 import { MatMenuModule, MatMenuTrigger } from "@angular/material/menu";
 
 // Tauri
-import { join, homeDir } from "@tauri-apps/api/path";
+import { join, sep, homeDir } from "@tauri-apps/api/path";
 
 /**
  * FileTreeComponent obtains the file structure of a given directory from the backend and displays it in an Angular Treeview.
@@ -46,16 +47,24 @@ export class FileTreeComponent implements OnInit {
 
   dataSource = this.fileTreeService.fileTree;
   childrenAccessor = (node: FileNode) => node.children ?? [];
-  hasChild = (_: number, node: FileNode) =>
-    !!node.children && node.children.length > 0;
 
   @ViewChild(MatMenuTrigger) fileTreeMenuTrigger!: MatMenuTrigger;
   fileTreeMenuPosition = { x: "0px", y: "0px" };
+  hasChild = (_: number, node: FileNode) =>
+    !!node.children && node.children.length > 0;
+  hasFile = (_: number, node: FileNode) => !!node.isDirectory;
+  dropListIds: string[] = [];
 
   constructor(
     private fileTreeService: FileTreeService,
     private gradeBooksService: GradeBooksService,
+    private router: Router,
   ) {}
+
+  async ngOnInit(): Promise<void> {
+    const semestersPath: string = await this.getRoot();
+    await this.fileTreeService.setFileTree(semestersPath);
+  }
 
   async getRoot(): Promise<string> {
     const home: string = await homeDir();
@@ -67,33 +76,21 @@ export class FileTreeComponent implements OnInit {
     return semestersPath;
   }
 
-  async ngOnInit(): Promise<void> {
-    const semestersPath: string = await this.getRoot();
-    await this.fileTreeService.setFileTree(semestersPath);
+  /* --- Drag and Drop Events --- */
+  dropListId(node: FileNode): string {
+    return `dl-${node.stem.replace(/\s+/g, "_")}`;
   }
 
-  async onNodeClick(file: FileNode): Promise<void> {
-    if (file.isDirectory) return;
-    this.gradeBooksService.load(file.path);
+  async onDrop(event: CdkDragDrop<FileNode[]>): Promise<void> {
+    if (event.previousContainer === event.container) return;
+
+    const node: FileNode = event.item.data as FileNode;
+
+    event.previousContainer.data.splice(event.previousIndex, 1);
+    event.container.data.splice(event.currentIndex, 0, node);
   }
 
-  drop(event: CdkDragDrop<FileNode[]>): void {
-    if (event.container === event.previousContainer) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    }
-  }
-
+  /* --- Click Events --- */
   backgroundRightClick(event: MouseEvent): void {
     event.preventDefault();
     this.fileTreeMenuPosition.x = `${event.clientX}px`;
@@ -101,6 +98,13 @@ export class FileTreeComponent implements OnInit {
     this.fileTreeMenuTrigger.openMenu();
   }
 
+  async onNodeClick(file: FileNode): Promise<void> {
+    if (file.isDirectory) return;
+    const route = await this.gradeBooksService.load(file.path);
+    this.router.navigate(route);
+  }
+
+  /* --- Creation --- */
   newFolder(): void {
     console.log("New folder action triggered");
     // TODO: Implement new folder creation logic
@@ -109,11 +113,5 @@ export class FileTreeComponent implements OnInit {
   newFile(): void {
     console.log("New file action triggered");
     // TODO: Implement new file creation logic
-  }
-
-  test(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopImmediatePropagation(); // prevents default contetx menu
-    console.log("Test action triggered");
   }
 }

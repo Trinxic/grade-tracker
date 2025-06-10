@@ -5,6 +5,7 @@ import { SheetViewComponent } from "./components/body/sheet-view/sheet-view.comp
 import { BookmarkedFilesComponent } from "./components/left-sidenav/bookmarked-files/bookmarked-files.component";
 import { FileTreeComponent } from "./components/left-sidenav/file-tree/file-tree.component";
 import { SearchFilesComponent } from "./components/left-sidenav/search-files/search-files.component";
+import { FileErrorComponent } from "@components/body/file-error/file-error.component";
 
 export const routes: Routes = [
   {
@@ -23,6 +24,10 @@ export const routes: Routes = [
   {
     path: "sheet-view",
     component: SheetViewComponent,
+  },
+  {
+    path: "file-error",
+    component: FileErrorComponent,
   },
   {
     path: "search-files",

@@ -20,6 +20,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             read_write::rw_dirs::get_file_tree,
+            read_write::rw_dirs::rename_node,
             read_write::rw_sems::get_courses,
             read_write::rw_sems::write_semester_json,
             read_write::rw_set::get_settings,

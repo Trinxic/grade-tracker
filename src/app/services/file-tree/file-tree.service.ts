@@ -1,5 +1,4 @@
-import { computed, Injectable, signal } from "@angular/core";
-import { join, homeDir } from "@tauri-apps/api/path";
+import { Injectable, signal } from "@angular/core";
 import { invoke } from "@tauri-apps/api/core";
 
 /**
@@ -19,9 +18,6 @@ export interface FileNode {
   providedIn: "root",
 })
 export class FileTreeService {
-  baseDir: string = "Documents";
-  semestersDir: string = "Semesters";
-
   fileTree = signal<FileNode[]>([]);
   returnWithRootNode = signal(false);
 

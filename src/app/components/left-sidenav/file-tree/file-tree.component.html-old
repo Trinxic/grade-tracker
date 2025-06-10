@@ -1,0 +1,59 @@
+<div class="file-tree-container" (contextmenu)="backgroundRightClick($event)">
+  <mat-tree
+    #tree
+    [dataSource]="dataSource()"
+    [childrenAccessor]="childrenAccessor"
+    class="file-tree"
+  >
+    <mat-tree-node *matTreeNodeDef="let node; when: hasChild">
+      <div class="node folder" cdkDrag [cdkDragData]="node">
+        <button mat-icon-button matTreeNodeToggle>
+          <mat-icon>
+            {{ tree.isExpanded(node) ? "folder_open" : "folder" }}
+          </mat-icon>
+        </button>
+        {{ node.stem }}
+      </div>
+
+      <!-- drop-zone for folder's children -->
+      <div
+        class="children"
+        cdkDropList
+        [id]="dropListId(node)"
+        [cdkDropListData]="node.children"
+        [cdkDropListConnectedTo]="dropListIds"
+        (cdkDropListDropped)="onDrop($event)"
+      >
+        <ng-container matTreeNodeOutlet></ng-container>
+      </div>
+    </mat-tree-node>
+
+    <!-- Leaf (file) node template -->
+    <mat-tree-node *matTreeNodeDef="let node">
+      <div class="node file" cdkDrag [cdkDragData]="node">
+        <mat-icon>description</mat-icon>
+        {{ node.stem }}
+      </div>
+    </mat-tree-node>
+  </mat-tree>
+</div>
+
+<!-- Context Menu Trigger -->
+<div
+  #menuTrigger="matMenuTrigger"
+  [matMenuTriggerFor]="fileTreeMenu"
+  [style.top]="fileTreeMenuPosition.y"
+  [style.left]="fileTreeMenuPosition.x"
+  style="position: fixed; width: 0; height: 0"
+></div>
+
+<mat-menu #fileTreeMenu="matMenu">
+  <button mat-menu-item (click)="newFolder()">
+    <mat-icon>create_new_folder</mat-icon>
+    <span>New Folder</span>
+  </button>
+  <button mat-menu-item (click)="newFile()">
+    <mat-icon>insert_drive_file</mat-icon>
+    <span>New File</span>
+  </button>
+</mat-menu>

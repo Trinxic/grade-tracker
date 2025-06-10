@@ -61,3 +61,9 @@ pub fn get_file_tree(root: String) -> Result<FileNode, String> {
     let base = root_path.parent().unwrap_or(root_path);
     read_dir_recursive(root_path, base).map_err(|e| format!("Failed to read: `{}`: {}", root, e))
 }
+
+#[tauri::command]
+pub fn rename_node(old_path: String, new_path: String) -> Result<(), String> {
+    std::fs::rename(&old_path, &new_path)
+        .map_err(|e| format!("Failed to rename `{}` to `{}`: {}", old_path, new_path, e))
+}
